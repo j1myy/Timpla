@@ -5,7 +5,7 @@
 
   export default defineConfig({
     plugins: [react()],
-    base: '/Timpla/',  // <-- ADD THIS LINE HERE
+    base: process.env.VERCEL ? '/' : '/Timpla/',
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
