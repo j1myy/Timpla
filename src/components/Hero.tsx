@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 
-export default function Hero() {
+export default function Hero({ onNavigate }: { onNavigate: (page: string) => void }) {
   return (
     <section className="relative h-screen w-full flex items-center justify-center overflow-hidden">
       {/* Background Image with Overlay */}
@@ -51,10 +51,16 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="flex flex-col md:flex-row gap-6 justify-center items-center"
         >
-          <button className="px-8 py-4 bg-[#C6A87C] text-[#1a1510] font-bold uppercase tracking-widest hover:bg-[#b09265] transition-all duration-300 min-w-[200px]">
+          <button 
+            onClick={() => onNavigate('order')}
+            className="px-8 py-4 bg-[#C6A87C] text-[#1a1510] font-bold uppercase tracking-widest hover:bg-[#b09265] transition-all duration-300 min-w-[200px]"
+          >
             View Menu
           </button>
-          <button className="px-8 py-4 border border-[#E8E0D5]/30 text-[#E8E0D5] font-bold uppercase tracking-widest hover:bg-[#E8E0D5]/10 transition-all duration-300 min-w-[200px]">
+          <button 
+            onClick={() => document.getElementById('philosophy')?.scrollIntoView({ behavior: 'smooth' })}
+            className="px-8 py-4 border border-[#E8E0D5]/30 text-[#E8E0D5] font-bold uppercase tracking-widest hover:bg-[#E8E0D5]/10 transition-all duration-300 min-w-[200px]"
+          >
             Our Story
           </button>
         </motion.div>

@@ -26,7 +26,7 @@ const drinks = [
   }
 ];
 
-export default function FeaturedMenu() {
+export default function FeaturedMenu({ onNavigate }: { onNavigate: (page: string) => void }) {
   return (
     <section id="menu" className="py-24 bg-[#E8E0D5] text-[#1a1510]">
       <div className="container mx-auto px-6">
@@ -38,7 +38,10 @@ export default function FeaturedMenu() {
               Each cup is a tribute to the rich volcanic soil of the Philippines.
             </p>
           </div>
-          <button className="hidden md:flex items-center gap-2 text-[#1a1510] uppercase tracking-widest text-xs font-bold border-b border-[#1a1510] pb-1 hover:text-[#C6A87C] hover:border-[#C6A87C] transition-all mt-6 md:mt-0">
+          <button 
+            onClick={() => onNavigate('order')}
+            className="hidden md:flex items-center gap-2 text-[#1a1510] uppercase tracking-widest text-xs font-bold border-b border-[#1a1510] pb-1 hover:text-[#C6A87C] hover:border-[#C6A87C] transition-all mt-6 md:mt-0"
+          >
             Full Menu <ArrowRight size={16} />
           </button>
         </div>
@@ -72,7 +75,10 @@ export default function FeaturedMenu() {
         </div>
 
         <div className="mt-12 md:hidden text-center">
-             <button className="flex items-center gap-2 text-[#1a1510] uppercase tracking-widest text-xs font-bold border-b border-[#1a1510] pb-1 mx-auto">
+             <button 
+              onClick={() => onNavigate('order')}
+              className="flex items-center gap-2 text-[#1a1510] uppercase tracking-widest text-xs font-bold border-b border-[#1a1510] pb-1 mx-auto"
+            >
             Full Menu <ArrowRight size={16} />
           </button>
         </div>

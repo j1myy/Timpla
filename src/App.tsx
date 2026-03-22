@@ -21,8 +21,8 @@ function AppContent() {
       case 'home':
         return (
           <main>
-            <Hero />
-            <FeaturedMenu />
+            <Hero onNavigate={setCurrentPage} />
+            <FeaturedMenu onNavigate={setCurrentPage} />
             <Philosophy />
           </main>
         );
@@ -41,8 +41,8 @@ function AppContent() {
       default:
         return (
            <main>
-            <Hero />
-            <FeaturedMenu />
+            <Hero onNavigate={setCurrentPage} />
+            <FeaturedMenu onNavigate={setCurrentPage} />
             <Philosophy />
           </main>
         );
