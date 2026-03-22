@@ -16,6 +16,7 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
   
   // Form State
   const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'delivery'>('pickup');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'gcash' | 'cod'>('card');
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -201,50 +202,118 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                    exit={{ opacity: 0, x: 20 }}
                    className="space-y-8"
                  >
-                   <h2 className="text-2xl font-serif text-[#E8E0D5] mb-6">Payment Method</h2>
+                    <h2 className="text-2xl font-serif text-[#E8E0D5] mb-6">Payment Method</h2>
                    
                    <div className="space-y-4">
-                     <div className="border border-[#C6A87C] bg-[#C6A87C]/5 p-6 flex items-start gap-4">
-                       <div className="w-4 h-4 rounded-full border border-[#C6A87C] flex items-center justify-center mt-1">
-                         <div className="w-2 h-2 rounded-full bg-[#C6A87C]" />
+                     {/* Credit Card Option */}
+                     <div 
+                       onClick={() => setPaymentMethod('card')}
+                       className={`border p-6 flex items-start gap-4 transition-all cursor-pointer ${
+                         paymentMethod === 'card' 
+                           ? 'border-[#C6A87C] bg-[#C6A87C]/5' 
+                           : 'border-white/10 hover:border-white/30'
+                       }`}
+                     >
+                       <div className={`w-4 h-4 rounded-full border flex items-center justify-center mt-1 transition-colors ${
+                         paymentMethod === 'card' ? 'border-[#C6A87C]' : 'border-white/20'
+                       }`}>
+                         {paymentMethod === 'card' && <div className="w-2 h-2 rounded-full bg-[#C6A87C]" />}
                        </div>
                        <div className="flex-grow">
                          <div className="flex justify-between items-center mb-2">
-                            <h4 className="font-bold text-[#E8E0D5]">Credit / Debit Card</h4>
+                            <h4 className={`font-bold transition-colors ${paymentMethod === 'card' ? 'text-[#E8E0D5]' : 'text-[#E8E0D5]/70'}`}>Credit / Debit Card</h4>
                             <div className="flex gap-2">
                                <div className="w-8 h-5 bg-white/10 rounded"></div>
                                <div className="w-8 h-5 bg-white/10 rounded"></div>
                             </div>
                          </div>
                          
-                         <div className="grid grid-cols-2 gap-4 mt-4">
-                            <input 
-                              type="text" 
-                              placeholder="Card Number" 
-                              className="col-span-2 bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
-                            />
-                            <input 
-                              type="text" 
-                              placeholder="MM/YY" 
-                              className="bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
-                            />
-                            <input 
-                              type="text" 
-                              placeholder="CVC" 
-                              className="bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
-                            />
-                         </div>
+                         {paymentMethod === 'card' && (
+                           <motion.div 
+                             initial={{ opacity: 0, height: 0 }}
+                             animate={{ opacity: 1, height: 'auto' }}
+                             className="grid grid-cols-2 gap-4 mt-4"
+                           >
+                              <input 
+                                type="text" 
+                                placeholder="Card Number" 
+                                className="col-span-2 bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
+                              />
+                              <input 
+                                type="text" 
+                                placeholder="MM/YY" 
+                                className="bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
+                              />
+                              <input 
+                                type="text" 
+                                placeholder="CVC" 
+                                className="bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
+                              />
+                           </motion.div>
+                         )}
                        </div>
                      </div>
 
-                     <div className="border border-white/10 p-6 flex items-center gap-4 opacity-50 cursor-not-allowed">
-                        <div className="w-4 h-4 rounded-full border border-white/20" />
-                        <span className="text-[#E8E0D5]">GCash / Maya (Unavailable)</span>
+                     {/* GCash / Maya Option */}
+                     <div 
+                       onClick={() => setPaymentMethod('gcash')}
+                       className={`border p-6 flex items-start gap-4 transition-all cursor-pointer ${
+                         paymentMethod === 'gcash' 
+                           ? 'border-[#C6A87C] bg-[#C6A87C]/5' 
+                           : 'border-white/10 hover:border-white/30'
+                       }`}
+                     >
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center mt-1 transition-colors ${
+                         paymentMethod === 'gcash' ? 'border-[#C6A87C]' : 'border-white/20'
+                        }`}>
+                          {paymentMethod === 'gcash' && <div className="w-2 h-2 rounded-full bg-[#C6A87C]" />}
+                        </div>
+                        <div className="flex-grow">
+                          <h4 className={`font-bold transition-colors ${paymentMethod === 'gcash' ? 'text-[#E8E0D5]' : 'text-[#E8E0D5]/70'}`}>GCash / Maya</h4>
+                          
+                          {paymentMethod === 'gcash' && (
+                            <motion.div 
+                               initial={{ opacity: 0, height: 0 }}
+                               animate={{ opacity: 1, height: 'auto' }}
+                               className="mt-4"
+                             >
+                               <p className="text-xs text-[#E8E0D5]/60 mb-3">You will be redirected to the E-Wallet portal to complete your payment.</p>
+                               <input 
+                                  type="text" 
+                                  placeholder="Mobile Number linked to account" 
+                                  className="w-full bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
+                                />
+                             </motion.div>
+                          )}
+                        </div>
                      </div>
                      
-                     <div className="border border-white/10 p-6 flex items-center gap-4 opacity-50 cursor-not-allowed">
-                        <div className="w-4 h-4 rounded-full border border-white/20" />
-                        <span className="text-[#E8E0D5]">Cash on Delivery</span>
+                     {/* Cash on Delivery Option */}
+                     <div 
+                       onClick={() => setPaymentMethod('cod')}
+                       className={`border p-6 flex flex-col gap-2 transition-all cursor-pointer ${
+                         paymentMethod === 'cod' 
+                           ? 'border-[#C6A87C] bg-[#C6A87C]/5' 
+                           : 'border-white/10 hover:border-white/30'
+                       }`}
+                     >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
+                           paymentMethod === 'cod' ? 'border-[#C6A87C]' : 'border-white/20'
+                          }`}>
+                            {paymentMethod === 'cod' && <div className="w-2 h-2 rounded-full bg-[#C6A87C]" />}
+                          </div>
+                          <span className={`font-bold transition-colors ${paymentMethod === 'cod' ? 'text-[#E8E0D5]' : 'text-[#E8E0D5]/70'}`}>Cash on Delivery</span>
+                        </div>
+                        {paymentMethod === 'cod' && (
+                          <motion.div 
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            className="pl-8"
+                          >
+                            <p className="text-xs text-[#E8E0D5]/60">Please prepare exact change if possible.</p>
+                          </motion.div>
+                        )}
                      </div>
                    </div>
                  </motion.div>
