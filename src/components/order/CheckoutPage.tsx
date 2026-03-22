@@ -17,6 +17,8 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
   // Form State
   const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'delivery'>('pickup');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'gcash' | 'cod'>('card');
+  const [eWalletType, setEWalletType] = useState<'gcash' | 'maya' | null>(null);
+  const [eWalletMethod, setEWalletMethod] = useState<'qr' | 'phone' | null>(null);
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -275,14 +277,63 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                             <motion.div 
                                initial={{ opacity: 0, height: 0 }}
                                animate={{ opacity: 1, height: 'auto' }}
-                               className="mt-4"
+                               className="mt-4 flex flex-col gap-5"
                              >
-                               <p className="text-xs text-[#E8E0D5]/60 mb-3">You will be redirected to the E-Wallet portal to complete your payment.</p>
-                               <input 
-                                  type="text" 
-                                  placeholder="Mobile Number linked to account" 
-                                  className="w-full bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
-                                />
+                               {/* Step 1: Choose Wallet */}
+                               <div>
+                                 <p className="text-xs text-[#E8E0D5]/60 mb-2 uppercase tracking-widest">1. Select E-Wallet</p>
+                                 <div className="grid grid-cols-2 gap-3">
+                                   <button 
+                                     onClick={(e) => { e.stopPropagation(); setEWalletType('gcash'); setEWalletMethod(null); }}
+                                     className={`py-3 border text-sm font-bold transition-colors ${eWalletType === 'gcash' ? 'border-blue-500 text-blue-500 bg-blue-500/10' : 'border-white/10 hover:border-white/30 text-[#E8E0D5]/70'}`}
+                                   >GCash</button>
+                                   <button 
+                                     onClick={(e) => { e.stopPropagation(); setEWalletType('maya'); setEWalletMethod(null); }}
+                                     className={`py-3 border text-sm font-bold transition-colors ${eWalletType === 'maya' ? 'border-green-500 text-green-500 bg-green-500/10' : 'border-white/10 hover:border-white/30 text-[#E8E0D5]/70'}`}
+                                   >Maya</button>
+                                 </div>
+                               </div>
+
+                               {/* Step 2: Choose Method */}
+                               {eWalletType && (
+                                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+                                   <p className="text-xs text-[#E8E0D5]/60 mb-2 uppercase tracking-widest">2. Payment Method</p>
+                                   <div className="grid grid-cols-2 gap-3">
+                                     <button 
+                                       onClick={(e) => { e.stopPropagation(); setEWalletMethod('qr'); }}
+                                       className={`py-3 border text-sm font-bold transition-colors ${eWalletMethod === 'qr' ? 'border-[#C6A87C] text-[#C6A87C] bg-[#C6A87C]/10' : 'border-white/10 hover:border-white/30 text-[#E8E0D5]/70'}`}
+                                     >Scan QR</button>
+                                     <button 
+                                       onClick={(e) => { e.stopPropagation(); setEWalletMethod('phone'); }}
+                                       className={`py-3 border text-sm font-bold transition-colors ${eWalletMethod === 'phone' ? 'border-[#C6A87C] text-[#C6A87C] bg-[#C6A87C]/10' : 'border-white/10 hover:border-white/30 text-[#E8E0D5]/70'}`}
+                                     >Phone Number</button>
+                                   </div>
+                                 </motion.div>
+                               )}
+
+                               {/* Step 3: Action */}
+                               {eWalletMethod === 'phone' && (
+                                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+                                   <p className="text-xs text-[#E8E0D5]/60 mb-2 uppercase tracking-widest">3. Details</p>
+                                   <input 
+                                     type="tel" 
+                                     onClick={e => e.stopPropagation()}
+                                     placeholder={`Enter ${eWalletType === 'gcash' ? 'GCash' : 'Maya'} Number`} 
+                                     className="w-full bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
+                                   />
+                                   <p className="text-xs text-[#E8E0D5]/40 mt-2">You will receive an SMS prompt to complete the payment.</p>
+                                 </motion.div>
+                               )}
+                               {eWalletMethod === 'qr' && (
+                                 <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center p-6 border border-white/10 bg-white/5">
+                                   <div className="w-40 h-40 bg-white flex items-center justify-center p-2 rounded">
+                                     {/* Fake QR Code */}
+                                     <div className="w-full h-full bg-[#1a1510]" style={{ backgroundImage: 'repeating-linear-gradient(45deg, #1a1510 25%, transparent 25%, transparent 75%, #1a1510 75%, #1a1510), repeating-linear-gradient(45deg, #1a1510 25%, #E8E0D5 25%, #E8E0D5 75%, #1a1510 75%, #1a1510)', backgroundPosition: '0 0, 10px 10px', backgroundSize: '20px 20px' }} />
+                                   </div>
+                                   <p className="text-sm font-bold text-[#C6A87C] mt-6 mb-1">₱{(cartTotal + (deliveryMethod === 'delivery' ? 50 : 0)).toFixed(2)}</p>
+                                   <p className="text-xs text-[#E8E0D5]/60 text-center">Scan with your {eWalletType === 'gcash' ? 'GCash' : 'Maya'} app to proceed</p>
+                                 </motion.div>
+                               )}
                              </motion.div>
                           )}
                         </div>
@@ -397,8 +448,8 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                   ) : (
                     <button 
                       onClick={handlePlaceOrder}
-                      disabled={isProcessing}
-                      className="w-full bg-[#C6A87C] text-[#1a1510] font-bold uppercase tracking-widest py-4 hover:bg-[#b09265] transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                      disabled={isProcessing || (paymentMethod === 'gcash' && (!eWalletType || !eWalletMethod))}
+                      className="w-full bg-[#C6A87C] text-[#1a1510] font-bold uppercase tracking-widest py-4 hover:bg-[#b09265] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isProcessing ? 'Processing...' : 'Complete Order'}
                     </button>

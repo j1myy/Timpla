@@ -68,8 +68,8 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-white/30 uppercase tracking-wider">
-          <p>&copy; 2024 Timpla Coffee Co. All rights reserved.</p>
+        <div className="pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-white/30 uppercase tracking-wider text-center md:text-left gap-4">
+          <p>&copy; 2024 Timpla Coffee Co. All rights reserved. <br className="md:hidden" /> For educational purposes.</p>
           <p className="mt-4 md:mt-0">Designed with &hearts; in Manila</p>
         </div>
       </div>
