@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 export default function Navbar({ onNavigate, currentPage }: { onNavigate: (page: string) => void, currentPage: string }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, isAuthenticated, cartCount } = useAuth();
+  const { user, isAuthenticated, cartCount, setIsCartOpen } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,7 +70,10 @@ export default function Navbar({ onNavigate, currentPage }: { onNavigate: (page:
             </button>
             
             <button 
-              onClick={() => handleNavClick('order')} // Or handleNavClick('checkout') if we want direct access
+              onClick={() => {
+                if (currentPage !== 'order') onNavigate('order');
+                setIsCartOpen(true);
+              }}
               className="relative text-[#E8E0D5] hover:text-[#C6A87C] transition-colors"
               aria-label="Cart"
             >
@@ -109,7 +112,11 @@ export default function Navbar({ onNavigate, currentPage }: { onNavigate: (page:
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-4">
              <button 
-              onClick={() => handleNavClick('order')}
+              onClick={() => {
+                if (currentPage !== 'order') onNavigate('order');
+                setIsCartOpen(true);
+                setIsMobileMenuOpen(false);
+              }}
               className="text-[#C6A87C] relative"
              >
                 <ShoppingBag size={24} />

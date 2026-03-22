@@ -19,6 +19,12 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'gcash' | 'cod'>('card');
   const [eWalletType, setEWalletType] = useState<'gcash' | 'maya' | null>(null);
   const [eWalletMethod, setEWalletMethod] = useState<'qr' | 'phone' | null>(null);
+  const [eWalletNumber, setEWalletNumber] = useState('');
+  const [cardDetails, setCardDetails] = useState({
+    number: '',
+    expiry: '',
+    cvc: ''
+  });
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -26,8 +32,24 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
     address: '',
     notes: ''
   });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  const validateStep1 = () => {
+    const errors: Record<string, string> = {};
+    if (!formData.name.trim()) errors.name = 'Required';
+    if (!formData.email.trim()) errors.email = 'Required';
+    if (!formData.phone.trim()) errors.phone = 'Required';
+    
+    if (deliveryMethod === 'delivery' && !formData.address.trim()) {
+      errors.address = 'Required';
+    }
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleNext = () => {
+    if (currentStep === 1 && !validateStep1()) return;
     if (currentStep < 3) setCurrentStep(c => c + 1);
   };
 
@@ -123,7 +145,7 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                      <h2 className="text-2xl font-serif text-[#E8E0D5] mb-6">How should we get this to you?</h2>
                      <div className="grid grid-cols-2 gap-4">
                        <button 
-                         onClick={() => setDeliveryMethod('pickup')}
+                         onClick={() => { setDeliveryMethod('pickup'); setFormErrors({ ...formErrors, address: '' }); }}
                          className={`p-6 border flex flex-col items-center gap-3 transition-all ${
                            deliveryMethod === 'pickup' 
                              ? 'border-[#C6A87C] bg-[#C6A87C]/10 text-[#C6A87C]' 
@@ -150,40 +172,52 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                    <div className="space-y-4">
                      <h3 className="text-[#C6A87C] text-xs uppercase tracking-widest font-bold border-b border-white/10 pb-2 mb-4">Contact Info</h3>
                      <div className="grid grid-cols-2 gap-4">
-                       <input 
-                         type="text" 
-                         placeholder="Name" 
-                         value={formData.name}
-                         onChange={e => setFormData({...formData, name: e.target.value})}
-                         className="col-span-2 md:col-span-1 bg-white/5 border border-white/10 p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors"
-                       />
-                       <input 
-                         type="tel" 
-                         placeholder="Phone Number" 
-                         value={formData.phone}
-                         onChange={e => setFormData({...formData, phone: e.target.value})}
-                         className="col-span-2 md:col-span-1 bg-white/5 border border-white/10 p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors"
-                       />
-                       <input 
-                         type="email" 
-                         placeholder="Email Address" 
-                         value={formData.email}
-                         onChange={e => setFormData({...formData, email: e.target.value})}
-                         className="col-span-2 bg-white/5 border border-white/10 p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors"
-                       />
+                       <div className="col-span-2 md:col-span-1">
+                         <input 
+                           type="text" 
+                           placeholder="Name" 
+                           value={formData.name}
+                           onChange={e => { setFormData({...formData, name: e.target.value}); setFormErrors({ ...formErrors, name: '' }); }}
+                           className={`w-full bg-white/5 border ${formErrors.name ? 'border-red-500' : 'border-white/10'} p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors`}
+                         />
+                         {formErrors.name && <span className="text-red-500 text-xs mt-1 block">{formErrors.name}</span>}
+                       </div>
+                       <div className="col-span-2 md:col-span-1">
+                         <input 
+                           type="tel" 
+                           placeholder="Phone Number" 
+                           value={formData.phone}
+                           onChange={e => { setFormData({...formData, phone: e.target.value}); setFormErrors({ ...formErrors, phone: '' }); }}
+                           className={`w-full bg-white/5 border ${formErrors.phone ? 'border-red-500' : 'border-white/10'} p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors`}
+                         />
+                         {formErrors.phone && <span className="text-red-500 text-xs mt-1 block">{formErrors.phone}</span>}
+                       </div>
+                       <div className="col-span-2">
+                         <input 
+                           type="email" 
+                           placeholder="Email Address" 
+                           value={formData.email}
+                           onChange={e => { setFormData({...formData, email: e.target.value}); setFormErrors({ ...formErrors, email: '' }); }}
+                           className={`w-full bg-white/5 border ${formErrors.email ? 'border-red-500' : 'border-white/10'} p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors`}
+                         />
+                         {formErrors.email && <span className="text-red-500 text-xs mt-1 block">{formErrors.email}</span>}
+                       </div>
                      </div>
                    </div>
 
                    {deliveryMethod === 'delivery' && (
                      <div className="space-y-4">
                        <h3 className="text-[#C6A87C] text-xs uppercase tracking-widest font-bold border-b border-white/10 pb-2 mb-4">Delivery Details</h3>
-                       <textarea 
-                         placeholder="Delivery Address" 
-                         rows={3}
-                         value={formData.address}
-                         onChange={e => setFormData({...formData, address: e.target.value})}
-                         className="w-full bg-white/5 border border-white/10 p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors resize-none"
-                       />
+                       <div>
+                         <textarea 
+                           placeholder="Delivery Address" 
+                           rows={3}
+                           value={formData.address}
+                           onChange={e => { setFormData({...formData, address: e.target.value}); setFormErrors({ ...formErrors, address: '' }); }}
+                           className={`w-full bg-white/5 border ${formErrors.address ? 'border-red-500' : 'border-white/10'} p-4 text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none transition-colors resize-none`}
+                         />
+                         {formErrors.address && <span className="text-red-500 text-xs mt-1 block">{formErrors.address}</span>}
+                       </div>
                        <textarea 
                          placeholder="Delivery Notes (Gate code, landmarks, etc.)" 
                          rows={2}
@@ -239,16 +273,22 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                               <input 
                                 type="text" 
                                 placeholder="Card Number" 
+                                value={cardDetails.number}
+                                onChange={e => setCardDetails({ ...cardDetails, number: e.target.value })}
                                 className="col-span-2 bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
                               />
                               <input 
                                 type="text" 
                                 placeholder="MM/YY" 
+                                value={cardDetails.expiry}
+                                onChange={e => setCardDetails({ ...cardDetails, expiry: e.target.value })}
                                 className="bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
                               />
                               <input 
                                 type="text" 
                                 placeholder="CVC" 
+                                value={cardDetails.cvc}
+                                onChange={e => setCardDetails({ ...cardDetails, cvc: e.target.value })}
                                 className="bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
                               />
                            </motion.div>
@@ -318,6 +358,8 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                                    <input 
                                      type="tel" 
                                      onClick={e => e.stopPropagation()}
+                                     value={eWalletNumber}
+                                     onChange={e => setEWalletNumber(e.target.value)}
                                      placeholder={`Enter ${eWalletType === 'gcash' ? 'GCash' : 'Maya'} Number`} 
                                      className="w-full bg-[#1a1510] border border-white/10 p-3 text-sm text-[#E8E0D5] focus:border-[#C6A87C] focus:outline-none"
                                    />
@@ -448,7 +490,11 @@ export default function CheckoutPage({ onNavigate }: { onNavigate: (page: string
                   ) : (
                     <button 
                       onClick={handlePlaceOrder}
-                      disabled={isProcessing || (paymentMethod === 'gcash' && (!eWalletType || !eWalletMethod))}
+                      disabled={
+                        isProcessing || 
+                        (paymentMethod === 'gcash' && (!eWalletType || !eWalletMethod || (eWalletMethod === 'phone' && !eWalletNumber.trim()))) ||
+                        (paymentMethod === 'card' && (!cardDetails.number.trim() || !cardDetails.expiry.trim() || !cardDetails.cvc.trim()))
+                      }
                       className="w-full bg-[#C6A87C] text-[#1a1510] font-bold uppercase tracking-widest py-4 hover:bg-[#b09265] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isProcessing ? 'Processing...' : 'Complete Order'}

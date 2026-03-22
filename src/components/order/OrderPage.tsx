@@ -134,9 +134,8 @@ const MENU_ITEMS: MenuItem[] = [
 const CATEGORIES = ["All", "Signature Coffee", "Non-Coffee", "Food"];
 
 export default function OrderPage({ onNavigate }: { onNavigate: (page: string) => void }) {
-  const { addToCart, cart, updateQuantity, removeFromCart, cartTotal } = useAuth();
+  const { addToCart, cart, updateQuantity, removeFromCart, cartTotal, isCartOpen, setIsCartOpen } = useAuth();
   const [activeCategory, setActiveCategory] = useState("All");
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const filteredItems = activeCategory === "All" 
     ? MENU_ITEMS 

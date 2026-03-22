@@ -39,6 +39,8 @@ type AppContextType = {
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;
+  isCartOpen: boolean;
+  setIsCartOpen: (isOpen: boolean) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -68,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // --- Cart State ---
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const addToCart = (item: MenuItem) => {
     setCart(prev => {
@@ -101,7 +104,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AppContext.Provider value={{ 
       user, login, signup, logout, updateProfile, isAuthenticated: !!user,
-      cart, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount
+      cart, addToCart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount,
+      isCartOpen, setIsCartOpen
     }}>
       {children}
     </AppContext.Provider>
